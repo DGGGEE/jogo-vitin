@@ -80,7 +80,7 @@ function spawnInvader() {
         y: 0,
         width: invaderWidth,
         height: invaderHeight,
-        speed: 2 // Speed of downward movement
+        speed: 2 + Math.floor(score / 50) // Speed increases with score
     });
 }
 
@@ -193,8 +193,19 @@ function gameLoop() {
 }
 
 // Start the game
-setInterval(spawnInvader, 1000); // Spawn a new invader every second
-gameLoop();
+document.getElementById('startButton').addEventListener('click', () => {
+    document.getElementById('startScreen').style.display = 'none';
+    document.getElementById('gameCanvas').style.display = 'block';
+    setInterval(() => {
+        spawnInvader();
+        // Increase spawn rate as score increases
+        if (score % 100 === 0 && score > 0) {
+            clearInterval(this);
+            setInterval(spawnInvader, Math.max(200, 1000 - score)); // Minimum interval of 200ms
+        }
+    }, 1000); // Initial spawn rate
+    gameLoop();
+});
 // Fullscreen functionality
 document.addEventListener('keydown', (e) => {
     if (e.key === 'f' || e.key === 'F') {
